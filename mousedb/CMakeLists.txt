@@ -48,7 +48,7 @@ function(target_compile_and_link_options_ target build_type)
 endfunction()
 
 set(LIB_DATABASE_SRC src/arena.cpp src/filter.cpp src/memtable.cpp
-                     src/mousedb/database/core.cpp src/random.cpp)
+                     src/random.cpp)
 add_library(lib_database ${LIB_DATABASE_SRC})
 set_target_properties(lib_database PROPERTIES EXPORT_NAME database OUTPUT_NAME
                                                                    database)

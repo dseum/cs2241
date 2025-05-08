@@ -195,8 +195,7 @@ auto Database::find(std::string_view key) -> std::optional<std::string_view> {
     return internal_find(key);
 }
 
-auto Database::insert(std::string_view key, std::string_view value,
-                      hlc::HLC hclock) -> void {
+auto Database::insert(std::string_view key, std::string_view value) -> void {
     std::cout << "INSERTING " << key << std::endl;
     std::string value_copy;
     value_copy.resize(sizeof(hclock.physical_us) + sizeof(hclock.logical) +
@@ -213,18 +212,8 @@ auto Database::insert(std::string_view key, std::string_view value,
     internal_insert(key, value_copy);
 }
 
-auto Database::erase(std::string_view key, hlc::HLC hclock) -> void {
+auto Database::erase(std::string_view key) -> void {
     std::cout << "ERASING " << key << std::endl;
-    std::string value_copy;
-    value_copy.resize(sizeof(hclock.physical_us) + sizeof(hclock.logical) +
-                      sizeof(hclock.node_id));
-    std::memcpy(value_copy.data(), &hclock.physical_us,
-                sizeof(hclock.physical_us));
-    std::memcpy(value_copy.data() + sizeof(hclock.physical_us), &hclock.logical,
-                sizeof(hclock.logical));
-    std::memcpy(
-        value_copy.data() + sizeof(hclock.physical_us) + sizeof(hclock.logical),
-        &hclock.node_id, sizeof(hclock.node_id));
     wal_insert(key, value_copy);
     internal_insert(key, value_copy);
 }
