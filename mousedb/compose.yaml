@@ -1,0 +1,15 @@
+name: mousedb
+services:
+  shell:
+    build: .
+    environment:
+      - TERM
+    network_mode: host
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./:/code
+      - root:/root
+
+volumes:
+  root:

@@ -1,0 +1,20 @@
+{
+  "dependencies": [
+    {
+      "name": "boost-dynamic-bitset",
+      "version>=": "1.87.0#0"
+    },
+    {
+      "name": "benchmark",
+      "version>=": "1.9.2#0"
+    },
+    {
+      "name": "gtest",
+      "version>=": "1.16.0#1"
+    },
+    {
+      "name": "quill",
+      "version>=": "9.0.1#0"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+---
+AllowShortFunctionsOnASingleLine: None
+BasedOnStyle: Google
+DerivePointerAlignment: false
+IndentWidth: 4
+PointerAlignment: Right
+SeparateDefinitionBlocks: Always
+UseTab: Never
