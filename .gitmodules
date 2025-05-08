@@ -1,3 +1,0 @@
-[submodule "lmbench"]
-	path = lmbench
-	url = https://github.com/intel/lmbench.git
