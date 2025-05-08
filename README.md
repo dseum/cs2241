@@ -15,7 +15,7 @@ sudo bin/x86_64-linux-gnu/lat_mem_rd -P 1 512M 128 > dram.out
 This depends on [fio](https://github.com/axboe/fio).
 
 ```sh
-sudo fio --filename=/dev/nvme0n1 \
+sudo fio --filename=/dev/nvme0n1p1 \
     --rw=randread --bs=4k --iodepth=16 --direct=1 \
     --numjobs=1 --time_based --runtime=30s \
     --group_reporting --write_lat_log=ssd \
