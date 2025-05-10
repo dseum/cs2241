@@ -30,7 +30,7 @@
         in
         {
           exe = pkgs.stdenvNoCC.mkDerivation {
-            name = "mousedb-server";
+            name = "mousedb";
             src = ./.;
             nativeBuildInputs = nativeBuildInputs pkgs ++ [
               pkgs.writableTmpDirAsHomeHook
@@ -38,7 +38,6 @@
             ];
             env = env pkgs;
             configurePhase = ''
-              cd exe_server
               cmake --preset release
             '';
             buildPhase = ''
