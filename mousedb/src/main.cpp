@@ -90,7 +90,7 @@ int main() {
         }
         size_t bf_fp = 0;
         for (size_t i = 0; i < N; ++i) {
-            if (bf.contains(std::to_string(uni_dist(test_rng)))) ++bf_fp;
+            if (bf.contains(std::to_string(zipf_dist(test_rng)))) ++bf_fp;
         }
         std::cout << "BloomFilter false positives: " << bf_fp << " / " << N
                   << " (" << (100.0 * bf_fp / N) << "%)\n";
@@ -104,7 +104,7 @@ int main() {
         }
         size_t cf_fp = 0;
         for (size_t i = 0; i < N; ++i) {
-            if (cf.contains(std::to_string(uni_dist(test_rng)))) ++cf_fp;
+            if (cf.contains(std::to_string(zipf_dist(test_rng)))) ++cf_fp;
         }
         std::cout << "CuckooFilter failures: " << cf_fail
                   << ", false positives: " << cf_fp << " / " << N << " ("
@@ -119,7 +119,7 @@ int main() {
         }
         size_t cm_fp = 0;
         for (size_t i = 0; i < N; ++i) {
-            if (cm.contains(std::to_string(uni_dist(test_rng)))) ++cm_fp;
+            if (cm.contains(std::to_string(zipf_dist(test_rng)))) ++cm_fp;
         }
         std::cout << "CuckooMap failures:   " << cm_fail
                   << ", false positives: " << cm_fp << " / " << N << " ("
