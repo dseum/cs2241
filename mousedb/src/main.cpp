@@ -60,8 +60,8 @@ int main(int argc, char **argv) {
         for (size_t i = 0; i < N; ++i) {
             if (bf.contains(std::to_string(uni_dist(test_rng)))) ++bf_fp;
         }
-        std::println("BloomFilter false positives: {} / {} ({}%)", bf_fp, N,
-                     (100.0 * bf_fp / N));
+        std::println("BloomFilter false positives: {} / {} ({}%), size: {}",
+                     bf_fp, N, (100.0 * bf_fp / N), bf.size());
 
         // CuckooFilter
         auto cf = make_cf(N);
@@ -108,8 +108,8 @@ int main(int argc, char **argv) {
         for (size_t i = 0; i < N; ++i) {
             if (bf.contains(std::to_string(uni_dist(test_rng)))) ++bf_fp;
         }
-        std::println("BloomFilter false positives: {} / {} ({}%)", bf_fp, N,
-                     (100.0 * bf_fp / N));
+        std::println("BloomFilter false positives: {} / {} ({}%), size: {}",
+                     bf_fp, N, (100.0 * bf_fp / N), bf.size());
 
         // CuckooFilter
         auto cf = make_cf(N);

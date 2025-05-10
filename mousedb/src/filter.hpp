@@ -19,6 +19,10 @@ class BloomFilter {
     auto contains(std::string_view item) const -> bool;
     auto save(FILE *fp) const -> size_t;
 
+    auto size() const -> size_t {
+        return size_;
+    }
+
    private:
     size_t size_;
     size_t hash_count_;
