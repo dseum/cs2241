@@ -264,7 +264,8 @@ auto CuckooFilter::save(FILE *fp) const -> size_t {
 }
 
 auto CuckooFilter::size() const -> size_t {
-    return bucket_size_ * bucket_count_ * sizeof(uint8_t);
+    const size_t bytes = bucket_count_ * bucket_size_;
+    return bytes * 8;
 }
 
 auto CuckooFilter::fingerprint(std::string_view item) const -> uint8_t {
