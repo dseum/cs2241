@@ -15,8 +15,9 @@ static BloomFilter make_bf(size_t n) {
 }
 
 static CuckooFilter make_cf(size_t n) {
-    size_t buckets = std::ceil(n / (4 * 0.95));
-    return CuckooFilter(buckets, 4, 8, 50);
+    size_t bucket_size = 4;
+    size_t buckets = std::ceil(n / (bucket_size * 0.95));
+    return CuckooFilter(buckets, bucket_size, 8, 50);
 }
 
 static CuckooMap make_cm(size_t n) {
@@ -32,12 +33,20 @@ std::discrete_distribution<size_t> make_zipf(size_t K, double s) {
     return std::discrete_distribution<size_t>(w.begin(), w.end());
 }
 
-int main() {
-    constexpr size_t N = 1'0'000'000ULL;
-
+int main(int argc, char **argv) {
+    size_t N = 1'000'000;
+    if (argc >= 2) {
+        try {
+            N = std::stoull(argv[1]);
+        } catch (const std::exception &e) {
+            std::cerr << "Invalid argument for N: \"" << argv[1]
+                      << "\". Must be a positive integer.\n";
+            return 1;
+        }
+    }
     std::mt19937_64 uni_rng(12345), test_rng(54321);
     std::uniform_int_distribution<uint64_t> uni_dist;
-    auto zipf_dist = make_zipf(/*K=*/1'000'000, 1.1);
+    auto zipf_dist = make_zipf(10'000'000, 1.1);
 
     // Uniform workload
     {

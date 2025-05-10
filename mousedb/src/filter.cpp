@@ -90,10 +90,18 @@ auto BloomFilter::save(FILE *fp) const -> size_t {
            nblocks * sizeof(block_type);
 }
 
-auto BloomFilter::hash(std::string_view item, size_t seed) const -> size_t {
+uint64_t splitmix64(uint64_t x) {
+    x += 0x9e3779b97f4a7c15ULL;
+    x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9ULL;
+    x = (x ^ (x >> 27)) * 0x94d049bb133111ebULL;
+    return x ^ (x >> 31);
+}
+
+auto BloomFilter::hash(std::string_view item, size_t i) const -> size_t {
     static std::hash<std::string_view> hasher;
-    auto h1 = hasher(item);
-    return h1 ^ (seed + 0x9e3779b97f4a7c15ULL + (h1 << 6) + (h1 >> 2));
+    uint64_t h1 = hasher(item);
+    uint64_t h2 = splitmix64(h1);
+    return static_cast<size_t>((h1 + i * h2) % size_);
 }
 
 CuckooFilter::CuckooFilter(size_t bucket_count, size_t bucket_size,
@@ -353,22 +361,23 @@ auto CuckooMap::insert(std::string_view item) -> bool {
         if (try_slot(cur_index)) return true;
     }
 
-    auto chain_length = [&](size_t i) {
-        Node *h = *reinterpret_cast<Node **>(buckets_.get() + i * stride);
-        size_t len = 0;
-        while (h) {
-            ++len;
-            h = h->next;
-        }
-        return len;
-    };
-    size_t target = (chain_length(i1) < chain_length(i2)) ? i1 : i2;
-    {
-        uint8_t *base = buckets_.get() + target * stride;
-        Node *head = *reinterpret_cast<Node **>(base);
-        Node *n = new Node{cur_fp, head};
-        *reinterpret_cast<Node **>(base) = n;
+    uint8_t *base1 = buckets_.get() + i1 * stride;
+    uint8_t *base2 = buckets_.get() + i2 * stride;
+
+    Node *h1 = *reinterpret_cast<Node **>(base1);
+    Node *h2 = *reinterpret_cast<Node **>(base2);
+
+    while (h1 && h2) {
+        h1 = h1->next;
+        h2 = h2->next;
     }
+
+    size_t target = (!h1 && h2) ? i1 : i2;
+
+    uint8_t *baseT = buckets_.get() + target * stride;
+    Node *oldHead = *reinterpret_cast<Node **>(baseT);
+    Node *n = new Node{cur_fp, oldHead};
+    *reinterpret_cast<Node **>(baseT) = n;
     return true;
 }
 
