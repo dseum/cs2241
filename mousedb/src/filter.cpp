@@ -263,6 +263,10 @@ auto CuckooFilter::save(FILE *fp) const -> size_t {
     return total;
 }
 
+auto CuckooFilter::size() const -> size_t {
+    return bucket_size_ * bucket_count_ * sizeof(uint8_t);
+}
+
 auto CuckooFilter::fingerprint(std::string_view item) const -> uint8_t {
     auto h = std::hash<std::string_view>{}(item);
     uint8_t fp = static_cast<uint8_t>(h & ((1ull << fingerprint_size_) - 1));
@@ -457,6 +461,29 @@ auto CuckooMap::save(FILE *fp) const -> size_t {
     }
 
     return written;
+}
+
+auto CuckooMap::size() const -> size_t {
+    const size_t stride = sizeof(Node *) + bucket_size_;
+
+    // bits used by the raw buckets_ array:
+    //    bucket_count_ * stride bytes, each byte = 8 bits
+    size_t bit_count = bucket_count_ * stride * 8;
+
+    // bits used by all overflow nodes:
+    for (size_t i = 0; i < bucket_count_; ++i) {
+        // find the head pointer in this bucket
+        uint8_t *base = buckets_.get() + i * stride;
+        Node *cur = *reinterpret_cast<Node **>(base);
+
+        // walk the chain, adding sizeof(Node)*8 bits per node
+        while (cur) {
+            bit_count += sizeof(Node) * 8;
+            cur = cur->next;
+        }
+    }
+
+    return bit_count;
 }
 
 auto CuckooMap::fingerprint(std::string_view item) const -> uint8_t {

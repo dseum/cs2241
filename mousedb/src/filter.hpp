@@ -36,6 +36,7 @@ class CuckooFilter {
     auto contains(std::string_view item) const -> bool;
     auto erase(std::string_view item) -> bool;
     auto save(FILE *fp) const -> size_t;
+    auto size() const -> size_t;
 
    private:
     size_t bucket_count_;
@@ -60,6 +61,7 @@ class CuckooMap {
     auto contains(std::string_view item) const -> bool;
     auto erase(std::string_view item) -> bool;
     auto save(FILE *fp) const -> size_t;
+    auto size() const -> size_t;
 
    private:
     size_t bucket_count_;

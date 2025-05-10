@@ -1,5 +1,6 @@
 #include <chrono>
 #include <iostream>
+#include <print>
 #include <random>
 #include <string>
 
@@ -39,8 +40,6 @@ int main(int argc, char **argv) {
         try {
             N = std::stoull(argv[1]);
         } catch (const std::exception &e) {
-            std::cerr << "Invalid argument for N: \"" << argv[1]
-                      << "\". Must be a positive integer.\n";
             return 1;
         }
     }
@@ -50,7 +49,7 @@ int main(int argc, char **argv) {
 
     // Uniform workload
     {
-        std::cout << "=== Uniform workload ===\n";
+        std::println("=== Uniform workload ===");
 
         // BloomFilter
         auto bf = make_bf(N);
@@ -61,8 +60,8 @@ int main(int argc, char **argv) {
         for (size_t i = 0; i < N; ++i) {
             if (bf.contains(std::to_string(uni_dist(test_rng)))) ++bf_fp;
         }
-        std::cout << "BloomFilter false positives: " << bf_fp << " / " << N
-                  << " (" << (100.0 * bf_fp / N) << "%)\n";
+        std::println("BloomFilter false positives: {} / {} ({}%)", bf_fp, N,
+                     (100.0 * bf_fp / N));
 
         // CuckooFilter
         auto cf = make_cf(N);
@@ -75,9 +74,10 @@ int main(int argc, char **argv) {
         for (size_t i = 0; i < N; ++i) {
             if (cf.contains(std::to_string(uni_dist(test_rng)))) ++cf_fp;
         }
-        std::cout << "CuckooFilter failures: " << cf_fail
-                  << ", false positives: " << cf_fp << " / " << N << " ("
-                  << (100.0 * cf_fp / N) << "%)\n";
+        std::println(
+            "CuckooFilter failures: {}, false positives: {} / {} ({}%), size: "
+            "{}",
+            cf_fail, cf_fp, N, (100.0 * cf_fp / N), cf.size());
 
         // CuckooMap
         auto cm = make_cm(N);
@@ -90,14 +90,14 @@ int main(int argc, char **argv) {
         for (size_t i = 0; i < N; ++i) {
             if (cm.contains(std::to_string(uni_dist(test_rng)))) ++cm_fp;
         }
-        std::cout << "CuckooMap failures:   " << cm_fail
-                  << ", false positives: " << cm_fp << " / " << N << " ("
-                  << (100.0 * cm_fp / N) << "%)\n";
+        std::println(
+            "CuckooMap failures: {}, false positives: {} / {} ({}%), size: {}",
+            cm_fail, cm_fp, N, (100.0 * cm_fp / N), cm.size());
     }
 
     // Zipfian workload
     {
-        std::cout << "\n=== Zipfian workload ===\n";
+        std::println("\n=== Zipfian workload ===");
 
         // BloomFilter
         auto bf = make_bf(N);
@@ -108,8 +108,8 @@ int main(int argc, char **argv) {
         for (size_t i = 0; i < N; ++i) {
             if (bf.contains(std::to_string(uni_dist(test_rng)))) ++bf_fp;
         }
-        std::cout << "BloomFilter false positives: " << bf_fp << " / " << N
-                  << " (" << (100.0 * bf_fp / N) << "%)\n";
+        std::println("BloomFilter false positives: {} / {} ({}%)", bf_fp, N,
+                     (100.0 * bf_fp / N));
 
         // CuckooFilter
         auto cf = make_cf(N);
@@ -122,9 +122,10 @@ int main(int argc, char **argv) {
         for (size_t i = 0; i < N; ++i) {
             if (cf.contains(std::to_string(uni_dist(test_rng)))) ++cf_fp;
         }
-        std::cout << "CuckooFilter failures: " << cf_fail
-                  << ", false positives: " << cf_fp << " / " << N << " ("
-                  << (100.0 * cf_fp / N) << "%)\n";
+        std::println(
+            "CuckooFilter failures: {}, false positives: {} / {} ({}%), size: "
+            "{}",
+            cf_fail, cf_fp, N, (100.0 * cf_fp / N), cf.size());
 
         // CuckooMap
         auto cm = make_cm(N);
@@ -137,9 +138,10 @@ int main(int argc, char **argv) {
         for (size_t i = 0; i < N; ++i) {
             if (cm.contains(std::to_string(uni_dist(test_rng)))) ++cm_fp;
         }
-        std::cout << "CuckooMap failures:   " << cm_fail
-                  << ", false positives: " << cm_fp << " / " << N << " ("
-                  << (100.0 * cm_fp / N) << "%)\n";
+        std::println(
+            "CuckooMap failures: {}, false positives: {} / {} ({}%), size: {}",
+            cm_fail, cm_fp, N, (100.0 * cm_fp / N), cm.size());
     }
+
     return 0;
 }
