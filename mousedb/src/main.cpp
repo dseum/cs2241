@@ -8,8 +8,10 @@
 using namespace mousedb::filter;
 
 static BloomFilter make_bf(size_t n) {
-    double m = -1.0 * n * std::log(0.03) / (std::pow(std::log(2), 2));
-    return BloomFilter(std::ceil(m), 3);
+    size_t m =
+        std::ceil(-1.0 * n * std::log(0.03) / (std::pow(std::log(2), 2)));
+    size_t k = std::ceil(std::log(2) * m / n);
+    return BloomFilter(m, k);
 }
 
 static CuckooFilter make_cf(size_t n) {
