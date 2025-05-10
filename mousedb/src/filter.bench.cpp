@@ -96,7 +96,7 @@ static void filter_CuckooFilterInsertZipf(benchmark::State &state) {
         auto cf = make_cf(batch);
         for (size_t i = 0; i < batch; ++i) {
             bool ok = cf.insert(keys[i]);
-            benchmark::ClobberMemory();
+            benchmark::DoNotOptimize(ok);
         }
     }
     state.SetItemsProcessed(state.iterations() * batch);
