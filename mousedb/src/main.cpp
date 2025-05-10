@@ -7,14 +7,19 @@
 
 using namespace mousedb::filter;
 
+static BloomFilter make_bf(size_t n) {
+    double m = -1.0 * n * std::log(0.03) / (std::pow(std::log(2), 2));
+    return BloomFilter(std::ceil(m), 3);
+}
+
 static CuckooFilter make_cf(size_t n) {
-    size_t buckets = std::max<size_t>(4, n / 4);
-    return CuckooFilter(buckets, 4, 8, 500);
+    size_t buckets = std::ceil(n / (4 * 0.95));
+    return CuckooFilter(buckets, 4, 8, 50);
 }
 
 static CuckooMap make_cm(size_t n) {
-    size_t buckets = std::max<size_t>(4, n / 4);
-    return CuckooMap(buckets, 4, 8, 500);
+    size_t buckets = std::ceil(n / (4 * 0.95));
+    return CuckooMap(buckets, 4, 8, 50);
 }
 
 std::discrete_distribution<size_t> make_zipf(size_t K, double s) {
@@ -37,7 +42,7 @@ int main() {
         std::cout << "=== Uniform workload ===\n";
 
         // BloomFilter
-        BloomFilter bf(N * 10, 3);
+        auto bf = make_bf(N);
         for (size_t i = 0; i < N; ++i) {
             bf.insert(std::to_string(uni_dist(uni_rng)));
         }
@@ -84,13 +89,13 @@ int main() {
         std::cout << "\n=== Zipfian workload ===\n";
 
         // BloomFilter
-        BloomFilter bf(N * 10, 3);
+        auto bf = make_bf(N);
         for (size_t i = 0; i < N; ++i) {
             bf.insert(std::to_string(zipf_dist(uni_rng)));
         }
         size_t bf_fp = 0;
         for (size_t i = 0; i < N; ++i) {
-            if (bf.contains(std::to_string(zipf_dist(test_rng)))) ++bf_fp;
+            if (bf.contains(std::to_string(uni_dist(test_rng)))) ++bf_fp;
         }
         std::cout << "BloomFilter false positives: " << bf_fp << " / " << N
                   << " (" << (100.0 * bf_fp / N) << "%)\n";
@@ -104,7 +109,7 @@ int main() {
         }
         size_t cf_fp = 0;
         for (size_t i = 0; i < N; ++i) {
-            if (cf.contains(std::to_string(zipf_dist(test_rng)))) ++cf_fp;
+            if (cf.contains(std::to_string(uni_dist(test_rng)))) ++cf_fp;
         }
         std::cout << "CuckooFilter failures: " << cf_fail
                   << ", false positives: " << cf_fp << " / " << N << " ("
@@ -119,7 +124,7 @@ int main() {
         }
         size_t cm_fp = 0;
         for (size_t i = 0; i < N; ++i) {
-            if (cm.contains(std::to_string(zipf_dist(test_rng)))) ++cm_fp;
+            if (cm.contains(std::to_string(uni_dist(test_rng)))) ++cm_fp;
         }
         std::cout << "CuckooMap failures:   " << cm_fail
                   << ", false positives: " << cm_fp << " / " << N << " ("
