@@ -16,14 +16,15 @@ static BloomFilter make_bf(size_t n) {
 }
 
 static CuckooFilter make_cf(size_t n) {
-    size_t bucket_size = 4;
+    size_t bucket_size = 2;
     size_t buckets = std::ceil(n / (bucket_size * 0.95));
     return CuckooFilter(buckets, bucket_size, 8, 50);
 }
 
 static CuckooMap make_cm(size_t n) {
-    size_t buckets = std::ceil(n / (4 * 0.95));
-    return CuckooMap(buckets, 4, 8, 50);
+    size_t bucket_size = 2;
+    size_t buckets = std::ceil(n / (bucket_size * 0.95));
+    return CuckooMap(buckets, bucket_size, 8, 50);
 }
 
 std::discrete_distribution<size_t> make_zipf(size_t K, double s) {
