@@ -26,7 +26,7 @@ std::discrete_distribution<size_t> make_zipf(size_t K, double s) {
 }
 
 int main() {
-    constexpr size_t N = 1'000'000'000ULL;
+    constexpr size_t N = 1'0'000'000ULL;
 
     std::mt19937_64 uni_rng(12345), test_rng(54321);
     std::uniform_int_distribution<uint64_t> uni_dist;
