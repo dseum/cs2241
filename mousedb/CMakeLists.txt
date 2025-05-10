@@ -58,7 +58,15 @@ target_include_directories(
   lib_database
   PRIVATE src
   PUBLIC include)
-target_link_libraries(lib_database PRIVATE Boost::dynamic_bitset)
+target_link_libraries(lib_database PUBLIC Boost::dynamic_bitset)
+
+set(LIB_DATABASE_MAIN_SRC src/main.cpp)
+add_executable(lib_database_main ${LIB_DATABASE_MAIN_SRC})
+set_target_properties(lib_database_main PROPERTIES OUTPUT_NAME exe/main)
+set_target_cxx_properties_(lib_database_main)
+target_compile_and_link_options_(lib_database_main ${CMAKE_BUILD_TYPE})
+target_include_directories(lib_database_main PRIVATE src)
+target_link_libraries(lib_database_main PRIVATE lib_database)
 
 file(GLOB_RECURSE LIB_DATABASE_TEST_SRC CONFIGURE_DEPENDS *.test.cpp)
 if(LIB_DATABASE_TEST_SRC)
